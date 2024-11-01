@@ -2,7 +2,6 @@ import { Request } from "@prisma/client";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
 import {
   Select,
   SelectContent,
@@ -19,10 +18,9 @@ export default function SelectOrOtherField(props: {
   options: string[];
   labelOther: string;
   placeholderOther: string;
+  value?: string;
   callback: (e: { [key: string]: string }) => void;
 }) {
-  const [selected, setSelected] = useState<string>("");
-
   const returnData = (data: string) =>
     props.callback({ [props.dataKey]: data });
 
@@ -33,14 +31,13 @@ export default function SelectOrOtherField(props: {
       </Label>
       <div className="mt-1">
         <Select
-          value={selected}
-          onValueChange={(value) => {
-            setSelected(value);
-            returnData(value === props.labelOther ? "" : value);
-          }}
+          value={props.value}
+          onValueChange={(value) =>
+            returnData(value === props.labelOther ? "" : value)
+          }
         >
           <SelectTrigger>
-            <SelectValue>{selected}</SelectValue>
+            <SelectValue>{props.value}</SelectValue>
           </SelectTrigger>
           <SelectContent className="backdrop-blur bg-slate-950 text-slate-400 border-slate-400 text-sm">
             <SelectGroup>
@@ -63,7 +60,7 @@ export default function SelectOrOtherField(props: {
             </SelectGroup>
           </SelectContent>
         </Select>
-        {selected === props.labelOther && (
+        {props.value === props.labelOther && (
           <Input
             placeholder={props.placeholderOther}
             onChange={(e) => {

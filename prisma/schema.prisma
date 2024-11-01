@@ -25,17 +25,16 @@ model Request {
 
   isStationary Boolean
 
-  date            DateTime
-  startTime       DateTime
-  expectedEndTime DateTime
-  meetingTime     DateTime?
+  dateTime        DateTime
+  expectedEndTime String
+  meetingTime     String?
 
   startLocation   String
   meetingLocation String?
 
   expectedPeople Int
 
-  requirements String[]
+  programPoints String[]
 
   contactName            String
   contactPhone           String

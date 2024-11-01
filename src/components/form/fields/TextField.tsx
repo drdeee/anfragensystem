@@ -2,6 +2,7 @@ import { Request } from "@prisma/client";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function TextField(props: {
   value?: string | number | null;
@@ -9,6 +10,7 @@ export default function TextField(props: {
   dataKey: keyof Request;
   datetime?: boolean;
   time?: boolean;
+  area?: boolean;
 
   callback: (e: { [key: string]: string }) => void;
 }) {
@@ -18,13 +20,22 @@ export default function TextField(props: {
       <Label className="font-bold" htmlFor={props.dataKey}>
         {props.label}
       </Label>
-      <Input
-        id={props.dataKey}
-        type={type}
-        className="mt-1"
-        value={props.value === null ? undefined : props.value}
-        onChange={(e) => props.callback({ [props.dataKey]: e.target.value })}
-      />
+      {props.area ? (
+        <Textarea
+          id={props.dataKey}
+          className="mt-1"
+          value={props.value === null ? undefined : props.value}
+          onChange={(e) => props.callback({ [props.dataKey]: e.target.value })}
+        />
+      ) : (
+        <Input
+          id={props.dataKey}
+          type={type}
+          className="mt-1"
+          value={props.value === null ? undefined : props.value}
+          onChange={(e) => props.callback({ [props.dataKey]: e.target.value })}
+        />
+      )}
     </div>
   );
 }

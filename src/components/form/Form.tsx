@@ -2,7 +2,7 @@
 
 import { Request } from "@prisma/client";
 import TextField from "./fields/TextField";
-import SelectOrOtherField from "./fields/SelectOrOtherField";
+import SelectField from "./fields/SelectField";
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Button } from "../ui/button";
@@ -25,7 +25,7 @@ export default function Form(props: FormProps) {
   }, [props.data]);
 
   const updateValue = (d: {
-    [key: string]: string | Date | undefined | string[];
+    [key: string]: string | Date | undefined | string[] | boolean;
   }) => setData({ ...data, ...d });
 
   const isNewRequest = props.data === undefined;
@@ -71,12 +71,16 @@ export default function Form(props: FormProps) {
             value={data?.eventOrganizer}
           />
 
-          <SelectOrOtherField
+          <SelectField
             dataKey="eventType"
             label="Art der Veranstaltung *"
-            options={["CSD", "Demo", "Gegendemo", "Straßenfest"]}
-            labelOther="Andere Art"
-            placeholderOther="Bitte hier eintragen"
+            options={[
+              "CSD",
+              "Demo",
+              "Gegendemo",
+              "Straßenfest",
+              "Andere Art (hinten dazuschreiben!)",
+            ]}
             callback={updateValue}
             value={data?.eventType}
           />
@@ -109,6 +113,23 @@ export default function Form(props: FormProps) {
             dataKey="expectedEndTime"
             callback={updateValue}
             value={data?.expectedEndTime}
+          />
+          <SelectField
+            dataKey="isStationary"
+            label="Soll es einen Demozug geben? *"
+            options={["Ja", "Nein"]}
+            value={
+              data?.isStationary === undefined
+                ? "Ja"
+                : data.isStationary
+                ? "Nein"
+                : "Ja"
+            }
+            callback={(e: { [key: string]: string }) => {
+              updateValue({
+                ["isStationary"]: e["isStationary"] === "Nein",
+              });
+            }}
           />
           <div className="mt-5 text-sm pt-2 mb-3 border-t-2">
             Wenn wir mit der Technik schon vor dem regulären
@@ -154,6 +175,46 @@ export default function Form(props: FormProps) {
             ]}
             callback={updateValue}
           />
+        </TabsContent>
+        <TabsContent value="other">
+          <TextField
+            label="Dein Name *"
+            dataKey="contactName"
+            callback={updateValue}
+            value={data?.contactName}
+          />
+          <TextField
+            label="Deine Telefonnummer *"
+            dataKey="contactPhone"
+            callback={updateValue}
+            value={data?.contactPhone}
+          />
+          <div className="text-sm mt-5 mb-3">
+            Wir benötigen entweder deine Mailadresse oder deinen
+            Telegram-Username, um dir automatisch Erinnerungen zu schicken,
+            falls uns noch Informationen fehlen sollten.
+          </div>
+          <TextField
+            label="Deine Mailadresse"
+            dataKey="contactMail"
+            value={data?.contactMail}
+            callback={updateValue}
+          />
+          <TextField
+            label="Dein Telegram-Username"
+            dataKey="contactTelegram"
+            value={data?.contactTelegram}
+            callback={updateValue}
+          />
+          <div className="mt-5">
+            <TextField
+              label="Sonstiges"
+              area
+              value={data?.other}
+              dataKey="other"
+              callback={updateValue}
+            />
+          </div>
         </TabsContent>
       </Tabs>
       <div className="flex flex-row justify-between mt-3">

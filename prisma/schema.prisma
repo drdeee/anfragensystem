@@ -36,10 +36,12 @@ model Request {
 
   programPoints String[]
 
-  contactName            String
-  contactPhone           String
-  contactAdditionalType  String
-  contactAdditionalValue String
+  contactName     String
+  contactPhone    String
+  contactMail     String?
+  contactTelegram String?
+
+  other String?
 
   cardId           BigInt
   telegramThreadId BigInt

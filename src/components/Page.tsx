@@ -8,7 +8,7 @@ export default function Page({
   title,
 }: PropsWithChildren<{ title: string }>) {
   return (
-    <div className="pt-8">
+    <div className="py-8">
       <Image
         src={logo}
         width={200}

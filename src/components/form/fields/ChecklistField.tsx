@@ -1,6 +1,7 @@
 import { Request } from "@prisma/client";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useEffect } from "react";
 
 export default function ChecklistField(props: {
   label: string;
@@ -17,6 +18,10 @@ export default function ChecklistField(props: {
       });
     else props.callback({ [props.dataKey]: [...(props.values || []), value] });
   };
+
+  useEffect(() => {
+    if (props.values === undefined) props.callback({ [props.dataKey]: [] });
+  }, []);
 
   const defaultOptions = props.options.map((o) => o[0]);
 
@@ -39,7 +44,10 @@ export default function ChecklistField(props: {
               className="flex items-center space-x-2 cursor-pointer"
               onClick={update(value)}
             >
-              <Checkbox checked={props.values?.includes(value)} id={value} />
+              <Checkbox
+                checked={props.values?.includes(value) || false}
+                id={value}
+              />
               <div>
                 <label
                   onClick={update(value)}

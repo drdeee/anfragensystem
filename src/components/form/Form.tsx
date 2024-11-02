@@ -7,26 +7,42 @@ import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Button } from "../ui/button";
 import ChecklistField from "./fields/ChecklistField";
-
-interface FormProps {
-  data?: Request;
-}
+import { validators } from "./validation";
+import { SafeParseReturnType } from "zod";
+import TelegramNameField from "./fields/TelegramNameField";
 
 type RequestData = Partial<Request>;
 
-const tabs = ["general", "process", "program", "other"];
+interface FormProps {
+  data?: Request;
+  submit: (data: RequestData) => Promise<{ status: string; channel?: string }>;
+}
+
+const tabs = ["general", "process", "program", "other"] as const;
 
 export default function Form(props: FormProps) {
   const [data, setData] = useState<RequestData>();
-  const [currentTab, setCurrentTab] = useState("general");
+  const [currentTab, setCurrentTab] =
+    useState<(typeof tabs)[number]>("general");
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [validation, setValidation] = useState<SafeParseReturnType<any, any>>();
 
   useEffect(() => {
     setData(props.data);
   }, [props.data]);
 
+  useEffect(() => {
+    validators[currentTab]!.safeParseAsync(data).then((result) => {
+      setValidation(result);
+    });
+  }, [currentTab, data]);
+
   const updateValue = (d: {
-    [key: string]: string | Date | undefined | string[] | boolean;
-  }) => setData({ ...data, ...d });
+    [key: string]: string | Date | undefined | string[] | boolean | null;
+  }) => {
+    setData({ ...data, ...d });
+  };
 
   const isNewRequest = props.data === undefined;
 
@@ -120,7 +136,7 @@ export default function Form(props: FormProps) {
             options={["Ja", "Nein"]}
             value={
               data?.isStationary === undefined
-                ? "Ja"
+                ? undefined
                 : data.isStationary
                 ? "Nein"
                 : "Ja"
@@ -200,12 +216,13 @@ export default function Form(props: FormProps) {
             value={data?.contactMail}
             callback={updateValue}
           />
-          <TextField
+          <TelegramNameField
             label="Dein Telegram-Username"
             dataKey="contactTelegram"
             value={data?.contactTelegram}
             callback={updateValue}
           />
+
           <div className="mt-5">
             <TextField
               label="Sonstiges"
@@ -227,9 +244,19 @@ export default function Form(props: FormProps) {
           Zurück
         </Button>
         {currentTab === tabs[tabs.length - 1] ? (
-          <Button>Abschicken!</Button>
+          <Button
+            disabled={!validation?.success}
+            onClick={() =>
+              props
+                .submit(validators.all.safeParse(data).data as Request)
+                .then((data) => console.log(data))
+            }
+          >
+            Abschicken!
+          </Button>
         ) : (
           <Button
+            disabled={!validation?.success}
             onClick={() => {
               setCurrentTab(tabs[tabs.indexOf(currentTab) + 1]);
             }}

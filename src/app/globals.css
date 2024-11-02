@@ -12,10 +12,6 @@ body {
   }
 }
 
-.form label > div:first {
-  @apply text-2xl;
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;

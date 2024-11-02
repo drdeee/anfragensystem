@@ -12,7 +12,7 @@ export default function TextField(props: {
   time?: boolean;
   area?: boolean;
 
-  callback: (e: { [key: string]: string }) => void;
+  callback: (e: { [key: string]: string | null }) => void;
 }) {
   const type = props.datetime ? "datetime-local" : props.time ? "time" : "text";
   return (
@@ -24,8 +24,12 @@ export default function TextField(props: {
         <Textarea
           id={props.dataKey}
           className="mt-1"
-          value={props.value === null ? undefined : props.value}
-          onChange={(e) => props.callback({ [props.dataKey]: e.target.value })}
+          value={props.value === null ? "" : props.value}
+          onChange={(e) =>
+            props.callback({
+              [props.dataKey]: e.target.value === "" ? null : e.target.value,
+            })
+          }
         />
       ) : (
         <Input
@@ -33,7 +37,11 @@ export default function TextField(props: {
           type={type}
           className="mt-1"
           value={props.value === null ? undefined : props.value}
-          onChange={(e) => props.callback({ [props.dataKey]: e.target.value })}
+          onChange={(e) =>
+            props.callback({
+              [props.dataKey]: e.target.value === "" ? null : e.target.value,
+            })
+          }
         />
       )}
     </div>

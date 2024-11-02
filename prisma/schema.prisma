@@ -14,9 +14,10 @@ datasource db {
 }
 
 model Request {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String    @id @default(uuid())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  contactVerified DateTime?
 
   eventName      String
   eventTopic     String
@@ -43,6 +44,6 @@ model Request {
 
   other String?
 
-  cardId           BigInt
-  telegramThreadId BigInt
+  cardId           BigInt?
+  telegramThreadId BigInt?
 }

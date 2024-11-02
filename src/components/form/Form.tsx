@@ -15,6 +15,7 @@ type RequestData = Partial<Request>;
 
 interface FormProps {
   data?: Request;
+  tabsLocked?: boolean;
   submit: (data: RequestData) => Promise<{ status: string; channel?: string }>;
 }
 
@@ -44,23 +45,26 @@ export default function Form(props: FormProps) {
     setData({ ...data, ...d });
   };
 
-  const isNewRequest = props.data === undefined;
-
   return (
     <div className="form">
-      <Tabs value={currentTab}>
+      <Tabs
+        value={currentTab}
+        onValueChange={(tab: string) =>
+          setCurrentTab(tab as (typeof tabs)[number])
+        }
+      >
         <div className="flex flex-row justify-center">
           <TabsList className="mx-auto">
-            <TabsTrigger value="general" disabled={isNewRequest}>
+            <TabsTrigger value="general" disabled={props.tabsLocked}>
               Generelles
             </TabsTrigger>
-            <TabsTrigger value="process" disabled={isNewRequest}>
+            <TabsTrigger value="process" disabled={props.tabsLocked}>
               Ablauf
             </TabsTrigger>
-            <TabsTrigger value="program" disabled={isNewRequest}>
+            <TabsTrigger value="program" disabled={props.tabsLocked}>
               Programm
             </TabsTrigger>
-            <TabsTrigger value="other" disabled={isNewRequest}>
+            <TabsTrigger value="other" disabled={props.tabsLocked}>
               Sonstiges
             </TabsTrigger>
           </TabsList>
@@ -113,7 +117,7 @@ export default function Form(props: FormProps) {
             dataKey="dateTime"
             label="Datum & Uhrzeit*"
             callback={updateValue}
-            value={data?.dateTime?.toString()}
+            value={data?.dateTime}
           />
 
           <TextField

@@ -52,7 +52,7 @@ export default function Home() {
         hier genau richtig! Mit dem folgenden Formular kannst du bei uns Technik
         anfragen.
       </div>
-      <Form submit={createRequest} />
+      <Form submit={createRequest} tabsLocked />
     </Page>
   );
 }

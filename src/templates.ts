@@ -10,6 +10,40 @@ Wir melden uns dann demnächst bei dir!
 
 Liebe Grüße,
 Lautis Dresden`,
+  cardDescription: `**Veranstaltungsname:**
+  <%= request.eventName %>
+
+**Veranstaltungsthema:**
+<%= request.eventTopic %>
+
+**Veranstalter*in:** <%= request.eventOrganizer %>
+
+**Art der Veranstaltung:**
+<%= request.eventType %> <% if (request.isStationary) { %>(stationär)<% } else { %>(nicht stationär)<% } %>
+
+**Datum & Uhrzeit:**
+<%= dateTime %>
+<% if (request.meetingTime) { %>**Gewünschte Ankunft:** <%= request.meetingTime %><% } %>
+
+**Erwartetes Ende:** <%= request.expectedEndTime %>
+
+**Startort:** <%= request.startLocation %>
+<% if (request.meetingLocation) { %>**Gewünschter Treffpunkt:** <%= request.meetingLocation %><% } %>
+
+**Erwartete Teilnehmer*innen:** <%= request.expectedPeople %>
+
+**Geplantes Programm enthält:**
+<% request.programPoints.forEach((p) => { %>- <%= p %><% }) %>
+
+**Kontakt:** <%= request.contactName %>
+**Telefonnummer:** <%= request.contactPhone %>
+<% if (request.contactMail) { %>**Mail:** <%= request.contactMail %><% } %>
+<% if (request.contactTelegram) { %>**Telegram:** @<%= request.contactTelegram %><% } %>
+
+<% if (request.other) { %>**Anmerkungen:**
+<%= request.other %><% } %>
+
+`,
 };
 
 export default templates;

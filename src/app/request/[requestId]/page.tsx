@@ -5,6 +5,9 @@ import { dbClient } from "@/lib/database";
 import { Request } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
+import { createCard } from "@/lib/nextcloud";
+import { render } from "ejs";
+import templates from "@/templates";
 
 const pageTitle = (request: Request) =>
   `${request.eventName} - ${format(request.dateTime, "dd.LL.y")}`;
@@ -42,6 +45,22 @@ export default async function RequestPage(props: {
       data: { contactVerified: new Date() },
     });
     contactVerificated = true;
+
+    const card = await createCard({
+      title: `${request.eventName} (${request.eventOrganizer})`,
+      description: render(templates.cardDescription, {
+        request,
+        dateTime: format(request.dateTime, "dd.LL.y, HH:mm"),
+      }),
+      duedate: request.dateTime,
+    });
+    await dbClient.request.update({
+      where: { id: request.id },
+      data: {
+        stackId: card?.stackId || null,
+        cardId: card?.cardId || null,
+      },
+    });
   }
 
   async function updateRequest() {

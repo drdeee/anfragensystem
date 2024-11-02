@@ -45,5 +45,6 @@ model Request {
   other String?
 
   cardId           BigInt?
+  stackId          BigInt?
   telegramThreadId BigInt?
 }

@@ -3,9 +3,10 @@ import { Request } from "@prisma/client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { format } from "date-fns";
 
 export default function TextField(props: {
-  value?: string | number | null;
+  value?: string | number | null | Date;
   label: string;
   dataKey: keyof Request;
   datetime?: boolean;
@@ -24,7 +25,7 @@ export default function TextField(props: {
         <Textarea
           id={props.dataKey}
           className="mt-1"
-          value={props.value === null ? "" : props.value}
+          value={props.value ? (props.value as string) : ""}
           onChange={(e) =>
             props.callback({
               [props.dataKey]: e.target.value === "" ? null : e.target.value,
@@ -36,7 +37,13 @@ export default function TextField(props: {
           id={props.dataKey}
           type={type}
           className="mt-1"
-          value={props.value === null ? undefined : props.value}
+          value={
+            props.datetime && props.value
+              ? format(props.value, "y-LL-dd'T'HH:mm")
+              : props.value
+              ? (props.value as string)
+              : ""
+          }
           onChange={(e) =>
             props.callback({
               [props.dataKey]: e.target.value === "" ? null : e.target.value,

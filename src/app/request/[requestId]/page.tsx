@@ -8,9 +8,7 @@ import { format } from "date-fns";
 import { createCard } from "@/lib/nextcloud";
 import { render } from "ejs";
 import templates from "@/templates";
-
-const pageTitle = (request: Request) =>
-  `${request.eventName} - ${format(request.dateTime, "dd.LL.y")}`;
+import bot from "@/lib/telegram/bot";
 
 export async function generateMetadata({
   params,
@@ -22,7 +20,7 @@ export async function generateMetadata({
   });
   if (request)
     return {
-      title: pageTitle(request!) + " | Lautis Dresden",
+      title: `${request.eventName} - ${request.formattedDateWithYear} | Lautis Dresden`,
     };
 }
 
@@ -50,7 +48,6 @@ export default async function RequestPage(props: {
       title: `${request.eventName} (${request.eventOrganizer})`,
       description: render(templates.cardDescription, {
         request,
-        dateTime: format(request.dateTime, "dd.LL.y, HH:mm"),
       }),
       duedate: request.dateTime,
     });
@@ -61,6 +58,7 @@ export default async function RequestPage(props: {
         cardId: card?.cardId || null,
       },
     });
+    await bot.sendNewRequest(request);
   }
 
   async function updateRequest() {
@@ -69,13 +67,16 @@ export default async function RequestPage(props: {
   }
 
   return (
-    <Page title={pageTitle(request)}>
+    <Page title={`${request.eventName} - ${request.formattedDateWithYear}`}>
       {contactVerificated && (
         <Notice color="green">
           Deine Anfrage wurde erfolgreich verifiziert.
         </Notice>
       )}
-      <Form data={request} submit={updateRequest} />
+      <Form
+        data={JSON.parse(JSON.stringify(request)) as Request}
+        submit={updateRequest}
+      />
     </Page>
   );
 }

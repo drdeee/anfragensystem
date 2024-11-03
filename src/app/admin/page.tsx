@@ -1,9 +1,9 @@
 import Page from "@/components/Page";
+import Event from "@/components/admin/Event";
+import { AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { dbClient } from "@/lib/database";
-import { format } from "date-fns";
-import { headers } from "next/headers";
-import { notFound } from "next/navigation";
-import { NextResponse } from "next/server";
+import { Accordion, AccordionContent } from "@radix-ui/react-accordion";
+import { Request } from "@prisma/client";
 
 export default async function AdminPage() {
   const upcomingEvents = await dbClient.request.findMany({
@@ -14,21 +14,52 @@ export default async function AdminPage() {
       dateTime: "asc",
     },
   });
+
+  const oldEvents = await dbClient.request.findMany({
+    where: {
+      dateTime: { lt: new Date() },
+    },
+    orderBy: {
+      dateTime: "desc",
+    },
+  });
+
+  async function deleteEvent(eventId: string) {
+    "use server";
+    await dbClient.request.delete({ where: { id: eventId } });
+    return;
+  }
+
   return (
     <Page title="Admin-Area">
-      {upcomingEvents.map((event) => (
-        <div
-          key={event.id}
-          className="flex flex-row p-2 gap-x-3 bg-slate-900 border-slate-950 border rounded-xl mb-2 items-center"
-        >
-          <div className="flex flex-col w-1/4 text-sm">
-            <div>{format(event.dateTime, "dd.LL.y, HH:mm")}</div>
-            <div>{event.startLocation}</div>
-          </div>
-          <div className="flex-grow font-bold">{event.eventName}</div>
-          <div className="h-full">Löschen</div>
-        </div>
-      ))}
+      <Accordion type="single" collapsible defaultValue="pending">
+        {oldEvents.length !== 0 && (
+          <AccordionItem value="older">
+            <AccordionTrigger>Vergangene Veranstaltungen</AccordionTrigger>
+            <AccordionContent className="p-2">
+              {oldEvents.map((event) => (
+                <Event
+                  key={event.id}
+                  event={JSON.parse(JSON.stringify(event)) as Request}
+                  deleteEvent={deleteEvent}
+                />
+              ))}
+            </AccordionContent>
+          </AccordionItem>
+        )}
+        <AccordionItem value="pending">
+          <AccordionTrigger>Anstehende Veranstaltungen</AccordionTrigger>
+          <AccordionContent className="p-2">
+            {upcomingEvents.map((event) => (
+              <Event
+                key={event.id}
+                event={JSON.parse(JSON.stringify(event)) as Request}
+                deleteEvent={deleteEvent}
+              />
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </Page>
   );
 }

@@ -19,7 +19,7 @@ export default function TelegramNameField(props: {
       <Input
         id={props.dataKey}
         type="text"
-        value={props.value === null ? "" : props.value}
+        value={!props.value ? "" : props.value}
         onChange={(e) =>
           props.callback({
             [props.dataKey]: e.target.value === "" ? null : e.target.value,

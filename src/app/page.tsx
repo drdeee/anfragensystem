@@ -2,7 +2,7 @@ import Form from "@/components/form/Form";
 import Page from "@/components/Page";
 import { dbClient } from "@/lib/database";
 import { sendMail } from "@/lib/mail";
-import { sendTelegramMessage } from "@/lib/telegram";
+import { sendTelegramMessage } from "@/lib/telegram/client";
 import templates from "@/templates";
 import { Request } from "@prisma/client";
 import { render } from "ejs";

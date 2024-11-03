@@ -1,5 +1,6 @@
-import { TelegramClient } from "telegram";
+import { Api, TelegramClient } from "telegram";
 import { StoreSession } from "telegram/sessions";
+import axios from "axios";
 
 const folderSession = new StoreSession(".telegram");
 export const client = new TelegramClient(

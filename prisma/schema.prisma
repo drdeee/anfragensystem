@@ -47,4 +47,29 @@ model Request {
   cardId           BigInt?
   stackId          BigInt?
   telegramThreadId BigInt?
+
+  availablePeople Availability[]
+}
+
+enum AvailabilityType {
+  Available
+  Unavailable
+  Unsure
+  CanDrive
+}
+
+model Availability {
+  id         String           @id @default(uuid())
+  userName   String?
+  firstName  String
+  telegramId BigInt
+  request    Request          @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  requestId  String
+  type       AvailabilityType
+}
+
+model OverviewMessage {
+  id        String @id @default(uuid())
+  messageId BigInt
+  requestId String
 }

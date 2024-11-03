@@ -1,3 +1,4 @@
+import axios from "axios";
 import { listAllBoards, listAllStacks } from "./lib/nextcloud";
 
 export async function register() {
@@ -8,5 +9,20 @@ export async function register() {
     console.log("NO STACK ID CONFIGURED!!!");
     await listAllStacks();
   }
-  // await initiateTelegramSession();
+
+  // setup telegram webhook
+  try {
+    await axios.post(
+      "/setWebhook",
+      {
+        url: `${process.env.BASE_URL}/api/webhooks/telegram`,
+        secret_token: process.env.TELEGRAM_SECRET_TOKEN,
+      },
+      {
+        baseURL: `${process.env.TELEGRAM_API_URL}/bot${process.env.TELEGRAM_BOT_TOKEN}`,
+      }
+    );
+  } catch (e: any) {
+    console.log(e.response.data);
+  }
 }

@@ -33,14 +33,10 @@ export default function SelectField(props: {
           <SelectTrigger>
             <SelectValue>{props.value}</SelectValue>
           </SelectTrigger>
-          <SelectContent className="backdrop-blur bg-slate-950 text-slate-400 border-slate-400 text-sm">
+          <SelectContent className="text-sm">
             <SelectGroup>
               {props.options.map((option) => (
-                <SelectItem
-                  key={option}
-                  value={option}
-                  className="cursor-pointer hover:ring-0 hover:outline-none focus:outline-none hover:bg-slate-900 p-1"
-                >
+                <SelectItem key={option} value={option} className="p-1">
                   {option}
                 </SelectItem>
               ))}

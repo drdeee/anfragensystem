@@ -27,7 +27,7 @@ export default function RootLayout({
         <div
           className={`${inter.className} antialiased w-full min-h-screen bg-[url('/background.jpg')] bg-cover bg-center bg-fixed dark`}
         >
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider attribute="class" forcedTheme="dark" enableSystem>
             {children}
           </ThemeProvider>
         </div>

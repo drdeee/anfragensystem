@@ -9,13 +9,12 @@ import { Button } from "../ui/button";
 import ChecklistField from "./fields/ChecklistField";
 import { validators } from "./validation";
 import { SafeParseReturnType } from "zod";
-import TelegramNameField from "./fields/TelegramNameField";
 
 type RequestData = Partial<Request>;
 
 interface FormProps {
   data?: Request;
-  tabsLocked?: boolean;
+  initial?: boolean;
   submit: (data: RequestData) => Promise<{ status: string; channel?: string }>;
 }
 
@@ -55,16 +54,16 @@ export default function Form(props: FormProps) {
       >
         <div className="flex flex-row justify-center">
           <TabsList className="mx-auto">
-            <TabsTrigger value="general" disabled={props.tabsLocked}>
+            <TabsTrigger value="general" disabled={props.initial}>
               Generelles
             </TabsTrigger>
-            <TabsTrigger value="process" disabled={props.tabsLocked}>
+            <TabsTrigger value="process" disabled={props.initial}>
               Ablauf
             </TabsTrigger>
-            <TabsTrigger value="program" disabled={props.tabsLocked}>
+            <TabsTrigger value="program" disabled={props.initial}>
               Programm
             </TabsTrigger>
-            <TabsTrigger value="other" disabled={props.tabsLocked}>
+            <TabsTrigger value="other" disabled={props.initial}>
               Sonstiges
             </TabsTrigger>
           </TabsList>
@@ -220,7 +219,7 @@ export default function Form(props: FormProps) {
             value={data?.contactMail}
             callback={updateValue}
           />
-          <TelegramNameField
+          <TextField
             label="Dein Telegram-Username"
             dataKey="contactTelegram"
             value={data?.contactTelegram}
@@ -247,7 +246,7 @@ export default function Form(props: FormProps) {
         >
           Zurück
         </Button>
-        {currentTab === tabs[tabs.length - 1] ? (
+        {(!props.initial || currentTab === tabs[tabs.length - 1]) && (
           <Button
             disabled={!validation?.success}
             onClick={() =>
@@ -256,18 +255,20 @@ export default function Form(props: FormProps) {
                 .then((data) => console.log(data))
             }
           >
-            Abschicken!
-          </Button>
-        ) : (
-          <Button
-            disabled={!validation?.success}
-            onClick={() => {
-              setCurrentTab(tabs[tabs.indexOf(currentTab) + 1]);
-            }}
-          >
-            Weiter
+            {props.initial ? "Absenden" : "Speichern"}
           </Button>
         )}
+
+        <Button
+          disabled={
+            currentTab === tabs[tabs.length - 1] || !validation?.success
+          }
+          onClick={() => {
+            setCurrentTab(tabs[tabs.indexOf(currentTab) + 1]);
+          }}
+        >
+          Weiter
+        </Button>
       </div>
     </div>
   );

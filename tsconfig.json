@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
- ],
+, "__test__/components/form/valitation.test.ts" ],
   "exclude": [
     "node_modules"
   ]

@@ -13,9 +13,9 @@ export function emptyToNull(arg: unknown) {
   return arg;
 }
 
-const formData = z.object({
-  eventName: z.string().min(3),
-  eventTopic: z.string().min(3),
+export const fieldValidators = {
+  eventName: z.string().min(1),
+  eventTopic: z.string().min(1),
   eventOrganizer: z.string().min(1),
   eventType: z.string(),
 
@@ -41,9 +41,15 @@ const formData = z.object({
     }
   }),
   contactMail: z.string().email("Ungültige Mailadresse").optional().nullish(),
-  contactTelegram: z.string().min(5).optional().nullish(),
+  contactTelegram: z.preprocess((value) => {
+    if (typeof value === "string" && value.startsWith("@"))
+      return value.slice(1);
+    return value;
+  }, z.string().min(5).max(32).optional().nullish()),
   other: z.string().optional().nullish(),
-});
+};
+
+const formData = z.object(fieldValidators);
 
 export const validators = {
   all: z.preprocess(emptyToNull, formData),

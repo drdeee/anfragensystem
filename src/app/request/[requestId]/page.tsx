@@ -9,6 +9,7 @@ import { createCard } from "@/lib/nextcloud";
 import { render } from "ejs";
 import templates from "@/templates";
 import bot from "@/lib/telegram/bot";
+import { headers } from 'next/headers'
 
 export async function generateMetadata({
   params,
@@ -38,27 +39,30 @@ export default async function RequestPage(props: {
   let contactVerificated: boolean | undefined;
 
   if (!request.contactVerified) {
-    await dbClient.request.update({
-      where: { id: request.id },
-      data: { contactVerified: new Date() },
-    });
-    contactVerificated = true;
+    const userAgent = (await headers()).get("user-agent")
+    if (userAgent !== "TelegramBot (like TwitterBot)") {
+      await dbClient.request.update({
+        where: { id: request.id },
+        data: { contactVerified: new Date() },
+      });
+      contactVerificated = true;
 
-    const card = await createCard({
-      title: `${request.eventName} (${request.eventOrganizer})`,
-      description: render(templates.cardDescription, {
-        request,
-      }),
-      duedate: request.dateTime,
-    });
-    await dbClient.request.update({
-      where: { id: request.id },
-      data: {
-        stackId: card?.stackId || null,
-        cardId: card?.cardId || null,
-      },
-    });
-    await bot.sendNewRequest(request);
+      const card = await createCard({
+        title: `${request.eventName} (${request.eventOrganizer})`,
+        description: render(templates.cardDescription, {
+          request,
+        }),
+        duedate: request.dateTime,
+      });
+      await dbClient.request.update({
+        where: { id: request.id },
+        data: {
+          stackId: card?.stackId || null,
+          cardId: card?.cardId || null,
+        },
+      });
+      await bot.sendNewRequest(request);
+    }
   }
 
   async function updateRequest() {

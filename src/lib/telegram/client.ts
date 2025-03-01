@@ -1,4 +1,4 @@
-import { Api, TelegramClient } from "telegram";
+import { TelegramClient } from "telegram";
 import { StoreSession } from "telegram/sessions";
 
 const folderSession = new StoreSession(".telegram");

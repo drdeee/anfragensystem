@@ -2,7 +2,7 @@ on: [push]
 jobs:
   build:
     container:
-     image: ubuntu:latest
+     image: docker:latest
     steps:
       - run: apt-get update && apt-get -y install nodejs
       - uses: actions/checkout@v4

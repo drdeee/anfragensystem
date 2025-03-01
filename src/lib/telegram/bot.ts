@@ -18,18 +18,20 @@ class TelegramBot {
 
   private async _sendMessage(
     message: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     replyMarkup: any = undefined,
-    threadId = this.threadIdNewRequests
+    threadId = Number.parseInt(this.threadIdNewRequests)
   ) {
     try {
       const response = await this.http.post("/sendMessage", {
         chat_id: this.chatId,
-        message_thread_id: Number.parseInt(this.threadIdNewRequests),
+        message_thread_id: threadId,
         text: message,
         parse_mode: "html",
         reply_markup: replyMarkup,
       });
       return response.data;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       console.log(e.response.data);
     }
@@ -40,6 +42,7 @@ class TelegramBot {
         url: `${process.env.BASE_URL}/api/webhooks/telegram`,
         secret_token: process.env.TELEGRAM_SECRET_TOKEN,
       });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       console.log(e.response.data);
     }
@@ -55,6 +58,7 @@ class TelegramBot {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async handleWebhook(data: any) {
     if (data.callback_query) {
       if (data.callback_query.data) {
@@ -144,14 +148,15 @@ class TelegramBot {
               data.callback_query.id,
               undefined,
               `${process.env.BASE_URL}/request/` +
-                (
-                  await dbClient.overviewMessage.findFirst({
-                    where: {
-                      messageId: data.callback_query.message.message_id,
-                    },
-                  })
-                )?.requestId
+              (
+                await dbClient.overviewMessage.findFirst({
+                  where: {
+                    messageId: data.callback_query.message.message_id,
+                  },
+                })
+              )?.requestId
             );
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (e: any) {
             console.log(e.response.data);
           }
@@ -241,6 +246,7 @@ class TelegramBot {
         parse_mode: "html",
         reply_markup: this._replyMarkupNewRequest(request.id),
       });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       console.log(e.response.data);
     }
@@ -315,10 +321,12 @@ class TelegramBot {
       console.log(obj);
 
       await this._pinMessage(message.data.result.message_id);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       console.log(Object.keys(e));
     }
   }
 }
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default new TelegramBot();

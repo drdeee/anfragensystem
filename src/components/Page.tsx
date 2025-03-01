@@ -3,7 +3,6 @@ import { PropsWithChildren } from "react";
 import logo from "@/media/logo.png";
 import Image from "next/image";
 import { Card } from "./ui/card";
-import { ModeToggle } from "./ModeToggle";
 
 export default function Page({
   children,

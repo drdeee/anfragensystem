@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 
 const http = axios.create({
   baseURL: process.env.NEXTCLOUD_URL,
@@ -51,6 +51,7 @@ export async function createCard({
       }
     );
     return card.data.id;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
   } catch (e: any) {
     return null;
   }

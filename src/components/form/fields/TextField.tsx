@@ -22,6 +22,8 @@ export default function TextField(props: {
   const [isValid, setIsValid] = useState<"unkown" | "valid" | "invalid">(
     "unkown"
   );
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const validator: ZodAny = (fieldValidators as any)[props.dataKey];
 
   const callback = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -66,8 +68,8 @@ export default function TextField(props: {
             props.datetime && props.value
               ? format(props.value, "y-LL-dd'T'HH:mm")
               : props.value
-              ? (props.value as string)
-              : ""
+                ? (props.value as string)
+                : ""
           }
           onChange={callback}
         />

@@ -14,7 +14,7 @@ import { validators } from "@/components/form/validation";
 export async function generateMetadata({
   params,
 }: {
-  params: { requestId: string };
+  params: Promise<{ requestId: string }>;
 }) {
   const request = await dbClient.request.findUnique({
     where: { id: (await params).requestId },
@@ -25,12 +25,13 @@ export async function generateMetadata({
     };
 }
 
-export default async function RequestPage(props: {
-  params: { requestId: string };
+export default async function RequestPage({ params }: {
+  params: Promise<{ requestId: string }>
 }) {
+  const requestId = (await params).requestId
   const request = await dbClient.request.findUnique({
     where: {
-      id: (await props.params).requestId,
+      id: requestId,
     },
   });
 

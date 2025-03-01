@@ -22,6 +22,7 @@ export async function register() {
         baseURL: `${process.env.TELEGRAM_API_URL}/bot${process.env.TELEGRAM_BOT_TOKEN}`,
       }
     );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     console.log(e.response.data);
   }

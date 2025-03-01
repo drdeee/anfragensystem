@@ -76,6 +76,9 @@ export default async function AdminPage() {
                 deleteEvent={deleteEvent}
               />
             ))}
+            {upcomingEvents.length == 0 && <span className="text-sm">
+              Keine Anstehenden Events :(
+            </span>}
           </AccordionContent>
         </AccordionItem>
       </Accordion>

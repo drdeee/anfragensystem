@@ -15,7 +15,8 @@ type RequestData = Partial<Request>;
 interface FormProps {
   data?: Request;
   initial?: boolean;
-  submit: (data: RequestData) => Promise<{ status: string; channel?: string }>;
+  requestId?: string;
+  submit: (data: RequestData, requestId?: string) => Promise<{ status: string; channel?: string }>;
 }
 
 const tabs = ["general", "process", "program", "other"] as const;
@@ -141,8 +142,8 @@ export default function Form(props: FormProps) {
               data?.isStationary === undefined
                 ? undefined
                 : data.isStationary
-                ? "Nein"
-                : "Ja"
+                  ? "Nein"
+                  : "Ja"
             }
             callback={(e: { [key: string]: string }) => {
               updateValue({
@@ -251,7 +252,7 @@ export default function Form(props: FormProps) {
             disabled={!validation?.success}
             onClick={() =>
               props
-                .submit(validators.all.safeParse(data).data as Request)
+                .submit(validators.all.safeParse(data).data as Request, props.requestId)
                 .then((data) => console.log(data))
             }
           >

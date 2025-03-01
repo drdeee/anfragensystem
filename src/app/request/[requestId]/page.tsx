@@ -4,12 +4,12 @@ import Page from "@/components/Page";
 import { dbClient } from "@/lib/database";
 import { Request } from "@prisma/client";
 import { notFound } from "next/navigation";
-import { format } from "date-fns";
 import { createCard } from "@/lib/nextcloud";
 import { render } from "ejs";
 import templates from "@/templates";
 import bot from "@/lib/telegram/bot";
 import { headers } from 'next/headers'
+import { validators } from "@/components/form/validation";
 
 export async function generateMetadata({
   params,
@@ -47,27 +47,37 @@ export default async function RequestPage(props: {
       });
       contactVerificated = true;
 
-      const card = await createCard({
-        title: `${request.eventName} (${request.eventOrganizer})`,
-        description: render(templates.cardDescription, {
-          request,
-        }),
-        duedate: request.dateTime,
-      });
-      await dbClient.request.update({
-        where: { id: request.id },
-        data: {
-          stackId: card?.stackId || null,
-          cardId: card?.cardId || null,
-        },
-      });
+      if (process.env.NEXTCLOUD_ENABLED) {
+        const card = await createCard({
+          title: `${request.eventName} (${request.eventOrganizer})`,
+          description: render(templates.cardDescription, {
+            request,
+          }),
+          duedate: request.dateTime,
+        });
+        await dbClient.request.update({
+          where: { id: request.id },
+          data: {
+            stackId: card?.stackId || null,
+            cardId: card?.cardId || null,
+          },
+        });
+      }
       await bot.sendNewRequest(request);
     }
   }
 
-  async function updateRequest() {
+  async function updateRequest(requestData: Partial<Request>, requestId?: string) {
     "use server";
-    return { status: "error" };
+    const data = validators.all.safeParse(requestData)
+    const request = await dbClient.request.findUnique({
+      where: {
+        id: requestId
+      }
+    })
+    if (!request || !data.success) return { status: "error" };
+    await dbClient.request.update({ where: { id: requestId }, data: data.data as Request })
+    return { status: "success" };
   }
 
   return (
@@ -79,6 +89,7 @@ export default async function RequestPage(props: {
       )}
       <Form
         data={JSON.parse(JSON.stringify(request)) as Request}
+        requestId={request.id}
         submit={updateRequest}
       />
     </Page>

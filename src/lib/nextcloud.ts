@@ -41,7 +41,6 @@ export async function createCard({
   description: string;
   duedate: Date;
 }): Promise<{ cardId: number; stackId: number } | null> {
-  if (!process.env.NEXTCLOUD_ENABLED) return { cardId: -1, stackId: -1 };
   try {
     const card = await http.post(
       `/apps/deck/api/v1.0/boards/${BOARD_ID}/stacks/${STACK_ID}/cards`,

@@ -2,16 +2,18 @@ import { TelegramClient } from "telegram";
 import { StoreSession } from "telegram/sessions";
 
 const folderSession = new StoreSession(".telegram");
-export const client = new TelegramClient(
-  folderSession,
-  Number.parseInt(process.env.TELEGRAM_API_ID || ""),
-  process.env.TELEGRAM_API_HASH || "",
-  {
-    connectionRetries: 5,
-  }
-);
+
+let client: TelegramClient;
 
 export async function initiateTelegramSession() {
+  if (!client) client = new TelegramClient(
+    folderSession,
+    Number.parseInt(process.env.TELEGRAM_API_ID || ""),
+    process.env.TELEGRAM_API_HASH || "",
+    {
+      connectionRetries: 5,
+    }
+  );
   await client.start({
     phoneNumber: async () => "",
     password: async () => "",

@@ -12,7 +12,7 @@ export default function Home() {
     "use server";
 
     try {
-      const request = await dbClient.request.create({
+      const request = await dbClient!.request.create({
         data: requestData as Omit<
           Request,
           "id" | "createdAt" | "updatedAt" | "cardId" | "telegramThreadId"

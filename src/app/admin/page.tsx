@@ -1,7 +1,7 @@
 import Page from "@/components/Page";
 import Event from "@/components/admin/Event";
 import { AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { dbClient } from "@/lib/database";
+import { dbClient, getOldEvents, getUpcomingEvents } from "@/lib/database";
 import { Accordion, AccordionContent } from "@radix-ui/react-accordion";
 import { Request } from "@prisma/client";
 
@@ -10,28 +10,10 @@ import { Request } from "@prisma/client";
  */
 export default async function AdminPage() {
   // get all upcoming events
-  const upcomingEvents = await dbClient.request.findMany({
-    where: {
-      // only show events with a date in the future
-      dateTime: { gte: new Date() },
-    },
-    orderBy: {
-      // sort by date in ascending order
-      dateTime: "asc",
-    },
-  });
+  const upcomingEvents = await getUpcomingEvents();
 
   // get all previous events
-  const oldEvents = await dbClient.request.findMany({
-    where: {
-      // only show events with a date in the past
-      dateTime: { lt: new Date() },
-    },
-    orderBy: {
-      // sort by date in descending order (newest first)
-      dateTime: "desc",
-    },
-  });
+  const oldEvents = await getOldEvents();
 
   /**
    * Server-side function to delete a request/event.
@@ -41,7 +23,7 @@ export default async function AdminPage() {
   async function deleteEvent(eventId: string): Promise<void> {
     "use server";
     // delete the event with the given id
-    await dbClient.request.delete({ where: { id: eventId } });
+    await dbClient!.request.delete({ where: { id: eventId } });
     return;
   }
 

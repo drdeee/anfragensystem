@@ -16,7 +16,7 @@ export async function generateMetadata({
 }: {
   params: Promise<{ requestId: string }>;
 }) {
-  const request = await dbClient.request.findUnique({
+  const request = await dbClient!.request.findUnique({
     where: { id: (await params).requestId },
   });
   if (request)
@@ -29,7 +29,7 @@ export default async function RequestPage({ params }: {
   params: Promise<{ requestId: string }>
 }) {
   const requestId = (await params).requestId
-  const request = await dbClient.request.findUnique({
+  const request = await dbClient!.request.findUnique({
     where: {
       id: requestId,
     },
@@ -42,7 +42,7 @@ export default async function RequestPage({ params }: {
   if (!request.contactVerified) {
     const userAgent = (await headers()).get("user-agent")
     if (userAgent !== "TelegramBot (like TwitterBot)") {
-      await dbClient.request.update({
+      await dbClient!.request.update({
         where: { id: request.id },
         data: { contactVerified: new Date() },
       });
@@ -56,7 +56,7 @@ export default async function RequestPage({ params }: {
           }),
           duedate: request.dateTime,
         });
-        await dbClient.request.update({
+        await dbClient!.request.update({
           where: { id: request.id },
           data: {
             stackId: card?.stackId || null,
@@ -71,13 +71,13 @@ export default async function RequestPage({ params }: {
   async function updateRequest(requestData: Partial<Request>, requestId?: string) {
     "use server";
     const data = validators.all.safeParse(requestData)
-    const request = await dbClient.request.findUnique({
+    const request = await dbClient!.request.findUnique({
       where: {
         id: requestId
       }
     })
     if (!request || !data.success) return { status: "error" };
-    await dbClient.request.update({ where: { id: requestId }, data: data.data as Request })
+    await dbClient!.request.update({ where: { id: requestId }, data: data.data as Request })
     return { status: "success" };
   }
 

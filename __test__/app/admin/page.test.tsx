@@ -15,7 +15,7 @@ jest.mock("@/lib/database", () => ({
   },
 }));
 
-const mockedClient = jest.mocked(dbClient);
+const mockedClient = jest.mocked(dbClient!);
 
 const upcomingEvents: Partial<Request>[] = [
   {

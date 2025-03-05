@@ -67,7 +67,7 @@ class TelegramBot {
         switch (type) {
           // first reaction
           case "i": {
-            const request = await dbClient.request.findUnique({
+            const request = await dbClient!.request.findUnique({
               where: { id: params[0] },
             });
             if (!request) return;
@@ -99,7 +99,7 @@ class TelegramBot {
                 break;
             }
             console.log(availabilityType, "t");
-            const availability = await dbClient.availability.findFirst({
+            const availability = await dbClient!.availability.findFirst({
               where: {
                 requestId: request.id,
                 telegramId: data.callback_query.from.id,
@@ -114,7 +114,7 @@ class TelegramBot {
               return;
             }
             if (availability) {
-              await dbClient.availability.update({
+              await dbClient!.availability.update({
                 where: { id: availability.id },
                 data: {
                   type: availabilityType,
@@ -122,7 +122,7 @@ class TelegramBot {
               });
             } else {
               const { first_name, username, id } = data.callback_query.from;
-              await dbClient.availability.create({
+              await dbClient!.availability.create({
                 data: {
                   requestId: request.id,
                   telegramId: id,
@@ -149,7 +149,7 @@ class TelegramBot {
               undefined,
               `${process.env.BASE_URL}/request/` +
               (
-                await dbClient.overviewMessage.findFirst({
+                await dbClient!.overviewMessage.findFirst({
                   where: {
                     messageId: data.callback_query.message.message_id,
                   },
@@ -182,7 +182,7 @@ class TelegramBot {
 
   private async _requestMessageContext(request: Request) {
     const availabilities = (
-      await dbClient.availability.findMany({ where: { requestId: request.id } })
+      await dbClient!.availability.findMany({ where: { requestId: request.id } })
     ).map((a) => ({
       id: a.telegramId,
       type: a.type,
@@ -269,7 +269,7 @@ class TelegramBot {
       name: `${format(request.dateTime, "dd.LL.")} ${request.eventName}`,
     });
     console.log(thread.data);
-    await dbClient.request.update({
+    await dbClient!.request.update({
       where: { id: request.id },
       data: {
         telegramThreadId: thread.data.message_thread_id,
@@ -311,7 +311,7 @@ class TelegramBot {
         },
       });
       console.log(message.data.result.message_id);
-      const obj = await dbClient.overviewMessage.create({
+      const obj = await dbClient!.overviewMessage.create({
         data: {
           messageId: message.data.result.message_id,
           requestId: request.id,

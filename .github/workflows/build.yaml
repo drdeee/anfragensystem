@@ -16,7 +16,7 @@ jobs:
         with:
           push: true
           tags: codeberg.org/lautis-dresden/anfragensystem:${{ github.ref_name }}
-          context: ./docker
+          file: ./docker/Dockerfile
   build-migrator:
     runs-on: ubuntu-latest
     steps:
@@ -33,5 +33,4 @@ jobs:
         with:
           push: true
           tags: codeberg.org/lautis-dresden/anfragensystem:migrator
-          context: ./docker
-          file: migrator.Dockerfile
+          file: ./docker/migrator.Dockerfile

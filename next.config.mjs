@@ -2,7 +2,7 @@
 const nextConfig = {
     output: "standalone",
     outputFileTracingIncludes: {
-        "/": ["./node_modules/prisma/**/*"]
+        "/": ["./node_modules/prisma/**/*", "./node_modules/.bin/prisma"]
     }
 };
 

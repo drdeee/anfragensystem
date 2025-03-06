@@ -57,4 +57,4 @@ ENV PORT=3000
 # https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["bash", "-c", "yarn prisma migrate deploy && node server.js"]
+CMD ["/bin/bash", "-c", "yarn prisma migrate deploy && node server.js"]

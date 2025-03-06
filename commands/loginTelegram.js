@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-const {TelegramClient} = require("telegram");
-const { StoreSession } = require("telegram/sessions");
+const { TelegramClient } = require("telegram");
+const { StringSession } = require("telegram/sessions");
 const { createInterface } = require("readline");
 
 require("dotenv").config()
@@ -10,9 +10,9 @@ const rl = createInterface({
   output: process.stdout,
 });
 
-const folderSession = new StoreSession(".telegram");
+const session = new StringSession("")
 const client = new TelegramClient(
-  folderSession,
+  session,
   Number.parseInt(process.env.TELEGRAM_API_ID || ""),
   process.env.TELEGRAM_API_HASH || "",
   {
@@ -36,6 +36,7 @@ const client = new TelegramClient(
       ),
     onError: (err) => console.log(err),
   });
+  console.log(session.save())
   await client.disconnect();
   process.exit()
 })()

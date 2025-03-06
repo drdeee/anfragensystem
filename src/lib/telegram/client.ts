@@ -1,13 +1,13 @@
 import { TelegramClient } from "telegram";
-import { StoreSession } from "telegram/sessions";
+import { StringSession } from "telegram/sessions";
 
-const folderSession = new StoreSession(".telegram");
+const session = new StringSession(process.env.TELEGRAM_SESSION || "");
 
 let client: TelegramClient;
 
 export async function initiateTelegramSession() {
   if (!client) client = new TelegramClient(
-    folderSession,
+    session,
     Number.parseInt(process.env.TELEGRAM_API_ID || ""),
     process.env.TELEGRAM_API_HASH || "",
     {

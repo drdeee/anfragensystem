@@ -47,6 +47,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=anfragensystem:anfragensystem /app/.next/standalone ./
 COPY --from=builder --chown=anfragensystem:anfragensystem /app/.next/static ./.next/static
 COPY prisma ./prisma
+RUN yarn add prisma
 USER anfragensystem
 
 EXPOSE 3000
@@ -57,4 +58,4 @@ ENV PORT=3000
 # https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["sh", "-c", "yarn add prisma && prisma migrate deploy && node server.js"]
+CMD ["sh", "-c", "yarn prisma migrate deploy && node server.js"]

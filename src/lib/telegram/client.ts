@@ -24,6 +24,7 @@ export async function initiateTelegramSession() {
 }
 
 async function ensureClientRunning() {
+  if (client == undefined) await initiateTelegramSession()
   if (!client.connected) await client.connect();
 }
 

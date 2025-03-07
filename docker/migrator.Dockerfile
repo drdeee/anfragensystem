@@ -10,7 +10,4 @@ RUN addgroup --system --gid 1001 anfragensystem
 RUN adduser --system --uid 1001 anfragensystem
 USER anfragensystem
 
-CMD ["sh", "-c", "yarn prisma db migrate"]
-
-
-
+CMD ["sh", "-c", "yarn prisma migrate deploy"]
